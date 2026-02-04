@@ -3,6 +3,8 @@ package com.example.demo.user.model;
 // représente un objet métier
 public class User {
 
+    private static Long idCounter = 0L; // Compteur statique pour auto-incrémentation
+
     private Long id;
     // private String name;
     // private Integer age;
@@ -14,7 +16,7 @@ public class User {
 
     // constructeur complet
     public User(String email, String pass, String salt) {
-        this.id = System.currentTimeMillis(); // génération d'un id simple
+        this.id = ++idCounter; // Auto-incrémentation : 1, 2, 3, 4...
         this.email = email;
         this.pass = pass;
         this.salt = salt;
