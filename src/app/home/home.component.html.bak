@@ -1,0 +1,192 @@
+﻿<!-- Header -->
+<header class="amazon-header">
+  <div class="header-top">
+    <div class="header-left">
+      <a href="#" class="amazon-logo">amadeus</a>
+    </div>
+    <div class="header-center">
+      <div class="search-bar">
+        <select class="search-category" [(ngModel)]="selectedCategory" (change)="filterByCategory(selectedCategory)">
+          <option value="">Tous les catégories</option>
+          <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+        </select>
+        <input type="text" class="search-input" placeholder="Rechercher des produits...">
+        <button class="search-btn">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M8.5 1a7.5 7.5 0 015.645 12.976l4.89 4.89a1 1 0 01-1.414 1.414l-4.89-4.89A7.5 7.5 0 118.5 1zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="header-btn account-btn">
+        <span class="btn-label-small">Bonjour</span>
+        <span class="btn-label-main">Comptes & listes</span>
+        <span class="dropdown-arrow">â–¼</span>
+      </button>
+      <button class="header-btn">
+        <span class="btn-label-small">Retours</span>
+        <span class="btn-label-main">& Commandes</span>
+      </button>
+      <button class="header-btn cart-btn">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+        <span class="cart-count">0</span>
+      </button>
+    </div>
+  </div>
+  
+  <nav class="header-nav">
+    <button class="nav-item">
+      <span>☰ Tout</span>
+    </button>
+    <a href="#" class="nav-item" (click)="filterByCategory(''); $event.preventDefault()">Tous les produits</a>
+    <a href="#" class="nav-item" *ngFor="let cat of categories" (click)="filterByCategory(cat); $event.preventDefault()">{{ cat }}</a>
+  </nav>
+</header>
+
+<!-- Hero Banner -->
+<section class="hero-banner">
+  <div class="banner-content">
+    <h1>Bienvenue sur Amadeus</h1>
+    <p>Découvrez nos produits au meilleur prix</p>
+  </div>
+</section>
+
+<!-- Promotions -->
+<section class="promotions">
+  <div class="promo-card">
+    <h3>Offres du jour</h3>
+    <p>RÃ©ductions jusqu'Ã  50%</p>
+    <a href="#">DÃ©couvrir â†’</a>
+  </div>
+  <div class="promo-card">
+    <h3>Livraison gratuite</h3>
+    <p>Pour les commandes supÃ©rieures Ã  25â‚¬</p>
+    <a href="#">En savoir plus â†’</a>
+  </div>
+  <div class="promo-card">
+    <h3>Bestsellers</h3>
+    <p>Les produits les plus vendus</p>
+    <a href="#">Voir la liste â†’</a>
+  </div>
+  <div class="promo-card">
+    <h3>Marques exclusives</h3>
+    <p>DÃ©couvrez nos marques partenaires</p>
+    <a href="#">Explorer â†’</a>
+  </div>
+</section>
+
+<!-- Products Grid -->
+<section class="products-section">
+  <h2>Tous nos produits</h2>
+  
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner">â³</div>
+    <p>Chargement des produits...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage && !isLoading" class="error-container">
+    <div class="error-icon">âŒ</div>
+    <h3>{{ errorMessage }}</h3>
+    <p>Assurez-vous que le backend est lancÃ© sur <strong>localhost:8080</strong></p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && !errorMessage && products.length === 0" class="empty-container">
+    <div class="empty-icon">ðŸ“¦</div>
+    <h3>Aucun produit disponible</h3>
+    <p>Les administrateurs peuvent ajouter des produits depuis le dashboard admin</p>
+  </div>
+  <!-- No Results State -->
+  <div *ngIf="!isLoading && !errorMessage && products.length > 0 && filteredProducts.length === 0" class="empty-container">
+    <div class="empty-icon">🔍</div>
+    <h3>Aucun produit dans cette catégorie</h3>
+    <p>Essayez de sélectionner une autre catégorie</p>
+  </div>
+  <!-- Products Grid -->
+  <div class="products-grid" *ngIf="!isLoading && !errorMessage && filteredProducts.length > 0">
+    <div class="product-card" *ngFor="let product of filteredProducts">
+      <div class="product-image">
+        <img [src]="product.imageUrl || 'https://via.placeholder.com/200x200?text=' + product.name" 
+             [alt]="product.name"
+             (error)="$any($event.target).src='https://via.placeholder.com/200x200?text=Image+indisponible'">
+        <div class="product-badge stock-badge" *ngIf="product.stock > 0 && product.stock < 10">
+          Stock limitÃ©: {{ product.stock }}
+        </div>
+        <div class="product-badge out-of-stock-badge" *ngIf="product.stock === 0">
+          Rupture de stock
+        </div>
+      </div>
+      <div class="product-info">
+        <div class="product-category">ðŸ·ï¸ {{ product.category }}</div>
+        <h3>{{ product.name }}</h3>
+        <p class="product-description">{{ product.description || 'Aucune description disponible' }}</p>
+        <div class="product-price">
+          <span class="price">{{ product.price }} â‚¬</span>
+        </div>
+        <div class="product-stock" *ngIf="product.stock > 0">
+          ðŸ“¦ {{ product.stock }} en stock
+        </div>
+        <button class="add-to-cart-btn" [disabled]="product.stock === 0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          {{ product.stock === 0 ? 'Indisponible' : 'Ajouter au panier' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="amazon-footer">
+  <div class="footer-content">
+    <div class="footer-section">
+      <h4>Ã€ propos</h4>
+      <ul>
+        <li><a href="#">Ã€ propos d'Amazon</a></li>
+        <li><a href="#">CarriÃ¨res chez Amazon</a></li>
+        <li><a href="#">Presse Amazon</a></li>
+        <li><a href="#">DÃ©claration de confidentialitÃ©</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Assistance</h4>
+      <ul>
+        <li><a href="#">Centre d'aide</a></li>
+        <li><a href="#">Suivi de commande</a></li>
+        <li><a href="#">Retours & Remboursements</a></li>
+        <li><a href="#">Nous contacter</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Vendre sur Amazon</h4>
+      <ul>
+        <li><a href="#">Portail des vendeurs</a></li>
+        <li><a href="#">Solutions de vente</a></li>
+        <li><a href="#">Conditions de vente</a></li>
+        <li><a href="#">PublicitÃ©s</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Services Amazon</h4>
+      <ul>
+        <li><a href="#">Amazon Prime</a></li>
+        <li><a href="#">ChaÃ®ne Web Amazon</a></li>
+        <li><a href="#">Amazon Coins</a></li>
+        <li><a href="#">Amazon Appstore</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 Amazon. Tous droits rÃ©servÃ©s.</p>
+  </div>
+</footer>

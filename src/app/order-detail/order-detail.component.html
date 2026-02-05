@@ -1,0 +1,83 @@
+<div class="order-detail-container">
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Chargement des détails...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error && !loading" class="error-message">
+    <p>{{ error }}</p>
+    <button (click)="goBack()" class="back-button">Retour aux commandes</button>
+  </div>
+
+  <!-- Order details -->
+  <div *ngIf="order && !loading && !error" class="order-detail">
+    <!-- Header -->
+    <div class="detail-header">
+      <button (click)="goBack()" class="back-btn">
+        ← Retour aux commandes
+      </button>
+      <h1>Commande #{{ order.id }}</h1>
+      <span [class]="'order-status ' + getStatusClass(order.status)">
+        {{ getStatusLabel(order.status) }}
+      </span>
+    </div>
+
+    <!-- Order info -->
+    <div class="order-info-card">
+      <div class="info-section">
+        <h3>Informations de commande</h3>
+        <div class="info-row">
+          <span class="label">Numéro de commande:</span>
+          <span class="value">#{{ order.id }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Date de commande:</span>
+          <span class="value">{{ formatDate(order.orderDate || order.createdAt) }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Statut:</span>
+          <span class="value">{{ getStatusLabel(order.status) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order items -->
+    <div class="items-card">
+      <h3>Articles commandés</h3>
+      <div class="items-list">
+        <div *ngFor="let item of order.items" class="item-row">
+          <img 
+            [src]="item.imageUrl || 'assets/placeholder.png'" 
+            [alt]="item.productName"
+            class="item-image"
+          >
+          <div class="item-info">
+            <h4>{{ item.productName }}</h4>
+            <p class="item-price">{{ item.price | currency: 'EUR' }} × {{ item.quantity }}</p>
+          </div>
+          <div class="item-total">
+            {{ getItemTotal(item.price, item.quantity) | currency: 'EUR' }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Order summary -->
+      <div class="order-summary">
+        <div class="summary-row">
+          <span class="label">Sous-total:</span>
+          <span class="value">{{ (order.totalPrice || order.totalAmount) | currency: 'EUR' }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">Livraison:</span>
+          <span class="value">Gratuite</span>
+        </div>
+        <div class="summary-row total">
+          <span class="label">Total:</span>
+          <span class="value">{{ (order.totalPrice || order.totalAmount) | currency: 'EUR' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

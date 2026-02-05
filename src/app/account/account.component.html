@@ -1,0 +1,46 @@
+<div class="account-container">
+  <div class="account-card">
+    <div class="account-header">
+      <button class="back-btn" (click)="goBack()">← Retour</button>
+      <h1>Mon Compte</h1>
+    </div>
+
+    <div class="account-content" *ngIf="user">
+      <div class="info-section">
+        <h2>Informations personnelles</h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Email</label>
+            <p>{{ user.email }}</p>
+          </div>
+          <div class="info-item">
+            <label>Rôle</label>
+            <p class="role-badge" [class.admin]="user.role === 'ADMIN'">
+              {{ user.role === 'ADMIN' ? 'Administrateur' : 'Utilisateur' }}
+            </p>
+          </div>
+          <div class="info-item" *ngIf="user.name">
+            <label>Nom</label>
+            <p>{{ user.name }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions-section">
+        <button class="action-btn" (click)="goBack()">
+          🏠 Retour à l'accueil
+        </button>
+        <button class="action-btn admin-btn" *ngIf="user.role === 'ADMIN' || user.admin" (click)="goToAdmin()">
+          ⚙️ Dashboard Admin
+        </button>
+        <button class="logout-btn" (click)="logout()">
+          🚪 Se déconnecter
+        </button>
+      </div>
+    </div>
+
+    <div class="loading" *ngIf="!user">
+      <p>Chargement...</p>
+    </div>
+  </div>
+</div>

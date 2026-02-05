@@ -1,0 +1,298 @@
+// Variables Amazon (cohérence avec le thème global)
+$amazon-orange: #FF9900;
+$amazon-orange-dark: #E88B00; // Version foncée précalculée
+$amazon-dark-blue: #146EB4;
+$amazon-dark-blue-darker: #0F5A94; // Version plus foncée
+$amazon-light-gray: #F5F5F5;
+$amazon-dark-gray: #232F3E;
+$amazon-border: #DDDDDD;
+$amazon-text: #111111;
+$amazon-secondary-text: #555555;
+$amazon-red: #b12704;
+
+.order-detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 80vh;
+  background: $amazon-light-gray;
+}
+
+// Loading state
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 0;
+  
+  .spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid $amazon-orange;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+  }
+  
+  p {
+    margin-top: 1rem;
+    color: $amazon-secondary-text;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Error state
+.error-message {
+  text-align: center;
+  padding: 2rem;
+  background-color: #fff3f3;
+  border: 1px solid #ffcccc;
+  border-radius: 8px;
+  margin: 2rem 0;
+  
+  p {
+    color: #cc0000;
+    margin-bottom: 1rem;
+  }
+  
+  .back-button {
+    background-color: $amazon-orange;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+    
+    &:hover {
+      background-color: $amazon-orange-dark;
+    }
+  }
+}
+
+// Order detail
+.order-detail {
+  .detail-header {
+    margin-bottom: 2rem;
+    
+    .back-btn {
+      background: none;
+      border: none;
+      color: $amazon-dark-blue;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      padding: 0.5rem 0;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        text-decoration: underline;
+        color: $amazon-dark-blue-darker;
+      }
+    }
+    
+    h1 {
+      font-size: 2rem;
+      color: $amazon-dark-gray;
+      margin-bottom: 1rem;
+    }
+    
+    .order-status {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      
+      &.status-pending {
+        background-color: #fff9e6;
+        color: #cc8800;
+      }
+      
+      &.status-confirmed {
+        background-color: #e6f3ff;
+        color: $amazon-dark-blue;
+      }
+      
+      &.status-shipped {
+        background-color: #f0e6ff;
+        color: #6600cc;
+      }
+      
+      &.status-delivered {
+        background-color: #e6ffe6;
+        color: #008800;
+      }
+      
+      &.status-cancelled {
+        background-color: #ffe6e6;
+        color: #cc0000;
+      }
+      
+      &.status-default {
+        background-color: $amazon-light-gray;
+        color: $amazon-secondary-text;
+      }
+    }
+  }
+}
+
+// Cards
+.order-info-card,
+.items-card {
+  background: white;
+  border: 1px solid $amazon-border;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  h3 {
+    font-size: 1.25rem;
+    color: $amazon-dark-gray;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid $amazon-border;
+  }
+}
+
+// Order info
+.info-section {
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid $amazon-light-gray;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    .label {
+      color: $amazon-secondary-text;
+      font-weight: 500;
+    }
+    
+    .value {
+      color: $amazon-dark-gray;
+      font-weight: 600;
+    }
+  }
+}
+
+// Items list
+.items-list {
+  margin-bottom: 1.5rem;
+}
+
+.item-row {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: $amazon-light-gray;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  .item-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid $amazon-border;
+  }
+  
+  .item-info {
+    flex: 1;
+    
+    h4 {
+      font-size: 1.125rem;
+      color: $amazon-dark-gray;
+      margin-bottom: 0.5rem;
+    }
+    
+    .item-price {
+      color: $amazon-secondary-text;
+      font-size: 0.875rem;
+    }
+  }
+  
+  .item-total {
+    display: flex;
+    align-items: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $amazon-red;
+  }
+}
+
+// Order summary
+.order-summary {
+  border-top: 2px solid $amazon-border;
+  padding-top: 1rem;
+  
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    
+    .label {
+      color: $amazon-secondary-text;
+    }
+    
+    .value {
+      color: $amazon-dark-gray;
+      font-weight: 600;
+    }
+    
+    &.total {
+      font-size: 1.25rem;
+      border-top: 1px solid $amazon-border;
+      margin-top: 0.5rem;
+      padding-top: 1rem;
+      
+      .label {
+        color: $amazon-dark-gray;
+        font-weight: 700;
+      }
+      
+      .value {
+        color: $amazon-red;
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .order-detail-container {
+    padding: 1rem;
+  }
+  
+  .detail-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .item-row {
+    flex-direction: column;
+    
+    .item-image {
+      width: 100%;
+      height: 200px;
+    }
+    
+    .item-total {
+      justify-content: flex-end;
+    }
+  }
+}

@@ -1,0 +1,217 @@
+// Variables Amazon
+$amazon-orange: #FF9900;
+$amazon-dark-blue: #146EB4;
+$amazon-light-gray: #F5F5F5;
+$amazon-dark-gray: #232F3E;
+$amazon-border: #DDDDDD;
+$amazon-text: #111111;
+
+.account-container {
+  min-height: 100vh;
+  background: $amazon-light-gray;
+  padding: 20px;
+}
+
+.account-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid $amazon-border;
+}
+
+.account-header {
+  background: $amazon-dark-gray;
+  color: white;
+  padding: 20px 30px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  .back-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    flex: 1;
+  }
+}
+
+.account-content {
+  padding: 30px;
+}
+
+.info-section {
+  margin-bottom: 30px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid $amazon-border;
+
+  h2 {
+    color: $amazon-text;
+    font-size: 21px;
+    margin-bottom: 20px;
+    font-weight: 700;
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.info-item {
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #565959;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 16px;
+    color: $amazon-text;
+    padding: 12px;
+    background: $amazon-light-gray;
+    border-radius: 4px;
+    border: 1px solid $amazon-border;
+    font-weight: 400;
+  }
+
+  .role-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    background: #067D62;
+    color: white;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    border: none;
+
+    &.admin {
+      background: $amazon-dark-blue;
+    }
+  }
+}
+
+.actions-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.action-btn {
+  padding: 12px 20px;
+  border: 1px solid $amazon-border;
+  background: white;
+  color: $amazon-text;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    background: #F7F8F8;
+    border-color: #888C8C;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  &.admin-btn {
+    border-color: $amazon-dark-blue;
+    color: $amazon-dark-blue;
+    font-weight: 700;
+
+    &:hover {
+      background: #EBF5FB;
+      border-color: $amazon-dark-blue;
+    }
+  }
+}
+
+.logout-btn {
+  padding: 12px 20px;
+  border: 1px solid $amazon-border;
+  background: linear-gradient(to bottom, #f7f8f8, #e7e9ec);
+  color: $amazon-text;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  grid-column: 1 / -1;
+
+  &:hover {
+    background: linear-gradient(to bottom, #e7e9ec, #d5d9d9);
+    border-color: #888C8C;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    background: linear-gradient(to bottom, #d5d9d9, #c7cccf);
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.loading {
+  padding: 60px;
+  text-align: center;
+  color: #565959;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .account-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px 20px;
+
+    .back-btn {
+      align-self: flex-start;
+    }
+
+    h1 {
+      font-size: 24px;
+    }
+  }
+
+  .account-content {
+    padding: 20px 15px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions-section {
+    grid-template-columns: 1fr;
+  }
+}
+

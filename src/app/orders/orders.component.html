@@ -1,0 +1,68 @@
+<div class="orders-container">
+  <div class="orders-header">
+    <button class="back-button" routerLink="/home">
+      ← Retour à l'accueil
+    </button>
+    <h1>Mes Commandes</h1>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Chargement de vos commandes...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error && !loading" class="error-message">
+    <p>{{ error }}</p>
+    <button (click)="loadOrders()" class="retry-button">Réessayer</button>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading && !error && orders.length === 0" class="empty-state">
+    <div class="empty-icon">📦</div>
+    <h2>Aucune commande</h2>
+    <p>Vous n'avez pas encore passé de commande.</p>
+    <a routerLink="/home" class="shop-button">Commencer mes achats</a>
+  </div>
+
+  <!-- Orders list -->
+  <div *ngIf="!loading && !error && orders.length > 0" class="orders-list">
+    <div *ngFor="let order of orders" class="order-card">
+      <div class="order-header">
+        <div class="order-info">
+          <h3>Commande #{{ order.id }}</h3>
+          <p class="order-date">{{ formatDate(order.orderDate || order.createdAt) }}</p>
+        </div>
+        <span [class]="'order-status ' + getStatusClass(order.status)">
+          {{ getStatusLabel(order.status) }}
+        </span>
+      </div>
+
+      <div class="order-items">
+        <div *ngFor="let item of order.items" class="order-item">
+          <img 
+            [src]="item.imageUrl || 'assets/placeholder.png'" 
+            [alt]="item.productName"
+            class="item-image"
+          >
+          <div class="item-details">
+            <h4>{{ item.productName }}</h4>
+            <p class="item-quantity">Quantité: {{ item.quantity }}</p>
+            <p class="item-price">{{ item.price | currency: 'EUR' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-footer">
+        <div class="order-summary">
+          <span class="item-count">{{ getOrderItemCount(order) }} article(s)</span>
+          <span class="order-total">Total: {{ getOrderTotal(order) | currency: 'EUR' }}</span>
+        </div>
+        <button (click)="viewOrderDetails(order.id!)" class="details-button">
+          Voir les détails
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,87 @@
+<div class="dashboard">
+  <header class="header">
+    <h1>Dashboard Admin</h1>
+    <div class="user-info">
+      <span>👑 {{ currentUser?.email }}</span>
+      <button (click)="logout()" class="btn-logout">🚪 Déconnexion</button>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="toolbar">
+      <h2>Gestion des Produits</h2>
+      <button (click)="openAddForm()" class="btn-add">➕ Ajouter un produit</button>
+    </div>
+
+    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
+
+    <div *ngIf="isLoading && !showProductForm" class="loading">⏳ Chargement...</div>
+
+    <!-- Liste des produits -->
+    <div class="products-grid" *ngIf="!showProductForm">
+      <div class="product-card" *ngFor="let product of products">
+        <img [src]="product.imageUrl || 'https://via.placeholder.com/200'" [alt]="product.name" />
+        <div class="product-info">
+          <h3>{{ product.name }}</h3>
+          <p class="category">🏷️ {{ product.category }}</p>
+          <p class="description">{{ product.description }}</p>
+          <p class="price">{{ product.price }} €</p>
+          <p class="stock">📦 Stock: {{ product.stock }}</p>
+          <div class="actions">
+            <button (click)="openEditForm(product)" class="btn-edit">✏️ Modifier</button>
+            <button (click)="deleteProduct(product)" class="btn-delete">🗑️ Supprimer</button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="products.length === 0 && !isLoading" class="no-products">
+        Aucun produit. Ajoutez-en un !
+      </div>
+    </div>
+
+    <!-- Formulaire d'ajout/modification -->
+    <div class="product-form" *ngIf="showProductForm">
+      <h3>{{ editingProduct ? 'Modifier le produit' : 'Nouveau produit' }}</h3>
+
+      <div class="form-group">
+        <label>Nom *</label>
+        <input type="text" [(ngModel)]="productForm.name" placeholder="Ex: iPhone 14" />
+      </div>
+
+      <div class="form-group">
+        <label>Catégorie *</label>
+        <input type="text" [(ngModel)]="productForm.category" placeholder="Ex: Électronique" />
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea [(ngModel)]="productForm.description" rows="3" placeholder="Description du produit..."></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Prix (€) *</label>
+          <input type="number" [(ngModel)]="productForm.price" min="0" step="0.01" />
+        </div>
+
+        <div class="form-group">
+          <label>Stock</label>
+          <input type="number" [(ngModel)]="productForm.stock" min="0" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>URL de l'image</label>
+        <input type="url" [(ngModel)]="productForm.imageUrl" placeholder="https://..." />
+      </div>
+
+      <div class="form-actions">
+        <button (click)="saveProduct()" [disabled]="isLoading" class="btn-save">
+          {{ isLoading ? '⏳' : (editingProduct ? '✅ Modifier' : '➕ Créer') }}
+        </button>
+        <button (click)="closeForm()" class="btn-cancel">❌ Annuler</button>
+      </div>
+    </div>
+  </div>
+</div>

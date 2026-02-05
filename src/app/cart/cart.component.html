@@ -1,0 +1,117 @@
+<!-- Header -->
+<header class="cart-header">
+  <div class="header-content">
+    <button class="back-btn" (click)="continueShopping()">← Continuer mes achats</button>
+    <h1>Mon Panier</h1>
+    <div class="cart-count-badge">{{ itemCount }} article(s)</div>
+  </div>
+</header>
+
+<!-- Loading State -->
+<div *ngIf="isLoading" class="loading-container">
+  <div class="loading-spinner">⏳</div>
+  <p>Chargement du panier...</p>
+</div>
+
+<!-- Error Message -->
+<div *ngIf="errorMessage && !isLoading" class="error-container">
+  <div class="error-icon">❌</div>
+  <h3>{{ errorMessage }}</h3>
+  <button class="btn-primary" (click)="continueShopping()">Retour aux produits</button>
+</div>
+
+<!-- Empty Cart -->
+<div *ngIf="!isLoading && !errorMessage && isEmpty" class="empty-cart">
+  <div class="empty-icon">🛒</div>
+  <h2>Votre panier est vide</h2>
+  <p>Découvrez nos produits et ajoutez-les à votre panier</p>
+  <button class="btn-primary" (click)="continueShopping()">Voir les produits</button>
+</div>
+
+<!-- Cart Content -->
+<div *ngIf="!isLoading && !errorMessage && hasItems" class="cart-container">
+  <div class="cart-content">
+    <!-- Cart Items -->
+    <div class="cart-items">
+      <div class="cart-item" *ngFor="let item of cart?.items">
+        <div class="item-image">
+          <img [src]="item.imageUrl || 'https://via.placeholder.com/150x150?text=' + item.productName" 
+               [alt]="item.productName"
+               (error)="$any($event.target).src='https://via.placeholder.com/150x150?text=Image+indisponible'">
+        </div>
+        
+        <div class="item-details">
+          <h3>{{ item.productName }}</h3>
+          <p class="item-category">🏷️ {{ item.productName }}</p>
+          <p class="item-price">{{ item.price }} €</p>
+        </div>
+
+        <div class="item-actions">
+          <div class="quantity-controls">
+            <button class="qty-btn" 
+                    (click)="updateQuantity(item, item.quantity - 1)"
+                    [disabled]="updatingItem[item.productId]">
+              −
+            </button>
+            <input type="number" 
+                   class="qty-input" 
+                   [(ngModel)]="item.quantity"
+                   (change)="updateQuantity(item, item.quantity)"
+                   [disabled]="updatingItem[item.productId]"
+                   min="1">
+            <button class="qty-btn" 
+                    (click)="updateQuantity(item, item.quantity + 1)"
+                    [disabled]="updatingItem[item.productId]">
+              +
+            </button>
+          </div>
+          
+          <div class="item-subtotal">
+            Sous-total: <strong>{{ item.price * item.quantity }} €</strong>
+          </div>
+
+          <button class="remove-btn" 
+                  (click)="removeItem(item)"
+                  [disabled]="updatingItem[item.productId]">
+            <span *ngIf="!updatingItem[item.productId]">🗑️ Supprimer</span>
+            <span *ngIf="updatingItem[item.productId]">⏳</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart Summary -->
+    <div class="cart-summary">
+      <h2>Récapitulatif</h2>
+      
+      <div class="summary-line">
+        <span>Articles ({{ itemCount }})</span>
+        <span>{{ cart?.totalPrice }} €</span>
+      </div>
+      
+      <div class="summary-line">
+        <span>Livraison</span>
+        <span class="free">Gratuite</span>
+      </div>
+      
+      <div class="summary-divider"></div>
+      
+      <div class="summary-total">
+        <span>Total</span>
+        <span class="total-amount">{{ cart?.totalPrice }} €</span>
+      </div>
+
+      <button class="checkout-btn" (click)="checkout()">
+        Commander
+      </button>
+
+      <button class="clear-cart-btn" (click)="clearCart()">
+        Vider le panier
+      </button>
+
+      <div class="security-info">
+        🔒 Paiement sécurisé
+      </div>
+    </div>
+  </div>
+</div>

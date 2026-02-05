@@ -1,0 +1,158 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="logo">amadeus</div>
+    
+    <div class="tabs">
+      <button 
+        type="button" 
+        class="tab" 
+        [class.active]="activeTab === 'login'"
+        (click)="switchTab('login')"
+      >
+        Connexion
+      </button>
+      <button 
+        type="button" 
+        class="tab" 
+        [class.active]="activeTab === 'register'"
+        (click)="switchTab('register')"
+      >
+        Inscription
+      </button>
+      <button 
+        type="button" 
+        class="tab" 
+        [class.active]="activeTab === 'forgot'"
+        (click)="switchTab('forgot')"
+      >
+        MDP
+      </button>
+      <button 
+        type="button" 
+        class="tab" 
+        [class.active]="activeTab === 'admin'"
+        (click)="switchTab('admin')"
+      >
+        Admin
+      </button>
+    </div>
+
+    <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <div class="success" *ngIf="successMessage">{{ successMessage }}</div>
+
+    <!-- LOGIN -->
+    <form *ngIf="activeTab === 'login'" (ngSubmit)="onLogin()" class="form">
+      <div class="field">
+        <label>Email</label>
+        <input
+          type="email"
+          [(ngModel)]="loginEmail"
+          name="loginEmail"
+          placeholder="votre@email.com"
+          required
+        />
+      </div>
+
+      <div class="field">
+        <label>Mot de passe</label>
+        <div class="password">
+          <input
+            [type]="showLoginPassword ? 'text' : 'password'"
+            [(ngModel)]="loginPassword"
+            name="loginPassword"
+            placeholder="Votre mot de passe"
+            required
+          />
+          <button
+            type="button"
+            class="toggle"
+            (click)="togglePasswordVisibility('login')"
+          >
+            {{ showLoginPassword ? '🙈' : '👁️' }}
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn" [disabled]="isLoading">
+{{ isLoading ? '⏳' : 'Se connecter' }}
+      </button>
+    </form>
+
+    <!-- REGISTER -->
+    <form *ngIf="activeTab === 'register'" (ngSubmit)="onRegister()" class="form">
+      <div class="field">
+        <label>Email</label>
+        <input
+          type="email"
+          [(ngModel)]="registerEmail"
+          name="registerEmail"
+          placeholder="votre@email.com"
+          required
+        />
+      </div>
+
+      <div class="field">
+        <label>Mot de passe</label>
+        <div class="password">
+          <input
+            [type]="showRegisterPassword ? 'text' : 'password'"
+            [(ngModel)]="registerPassword"
+            name="registerPassword"
+            placeholder="Minimum 6 caractères"
+            required
+          />
+          <button
+            type="button"
+            class="toggle"
+            (click)="togglePasswordVisibility('register')"
+          >
+            {{ showRegisterPassword ? '🙈' : '👁️' }}
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn" [disabled]="isLoading">
+        {{ isLoading ? '⏳' : "Créer un compte" }}
+      </button>
+    </form>
+
+    <!-- FORGOT PASSWORD -->
+    <form *ngIf="activeTab === 'forgot'" (ngSubmit)="onForgotPassword()" class="form">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="forgotEmail" name="forgotEmail" placeholder="votre@email.com" required />
+      </div>
+      <div class="field" *ngIf="showCodeInput">
+        <label>Code reçu par email</label>
+        <input type="text" [(ngModel)]="resetCode" name="resetCode" placeholder="123456" required />
+      </div>
+      <div class="field" *ngIf="showCodeInput">
+        <label>Nouveau mot de passe</label>
+        <div class="password">
+          <input [type]="showNewPassword ? 'text' : 'password'" [(ngModel)]="newPassword" name="newPassword" placeholder="Minimum 6 caractères" required />
+          <button type="button" class="toggle" (click)="togglePasswordVisibility('new')">
+            {{ showNewPassword ? '🙈' : '👁️' }}
+          </button>
+        </div>
+      </div>
+      <button type="submit" class="btn" [disabled]="isLoading">
+        {{ isLoading ? '⏳' : (showCodeInput ? 'Réinitialiser' : 'Envoyer le code') }}
+      </button>
+    </form>
+
+    <!-- ADMIN REQUEST -->
+    <form *ngIf="activeTab === 'admin'" (ngSubmit)="onRequestAdmin()" class="form">
+      <div class="field">
+        <label>Votre email</label>
+        <input type="email" [(ngModel)]="adminEmail" name="adminEmail" placeholder="votre@email.com" required />
+      </div>
+      <div class="field" *ngIf="showAdminCodeInput">
+        <label>Code admin (voir terminal)</label>
+        <input type="text" [(ngModel)]="adminCode" name="adminCode" placeholder="Entrez le code du terminal" required />
+      </div>
+      <button type="submit" class="btn" [disabled]="isLoading">
+        {{ isLoading ? '⏳' : (showAdminCodeInput ? 'Devenir admin' : 'Générer le code') }}
+      </button>
+    </form>
+  </div>
+</div>
