@@ -1,9 +1,13 @@
 package com.example.demo.user.service;
 
 import com.example.demo.user.model.User;
+import com.example.demo.user.model.UserRole;
+import com.example.demo.user.model.AdminRequest;
 import com.example.demo.user.repository.UserRepository;
+import com.example.demo.user.repository.AdminRequestRepository;
 import com.example.demo.user.security.PasswordHasher;
 import com.example.demo.user.security.CodeGenerator;
+import com.example.demo.user.security.AdminCodeGenerator;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,11 +20,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordHasher passwordHasher;
     private final CodeGenerator codeGenerator;
+    private final AdminCodeGenerator adminCodeGenerator;
+    private final AdminRequestRepository adminRequestRepository;
 
-    public UserService(UserRepository userRepository, PasswordHasher passwordHasher, CodeGenerator codeGenerator) {
+    public UserService(UserRepository userRepository, PasswordHasher passwordHasher, CodeGenerator codeGenerator, AdminCodeGenerator adminCodeGenerator, AdminRequestRepository adminRequestRepository) {
         this.userRepository = userRepository;
         this.passwordHasher = passwordHasher;
         this.codeGenerator = codeGenerator;
+        this.adminCodeGenerator = adminCodeGenerator;
+        this.adminRequestRepository = adminRequestRepository;
     }
 
     public List<User> getUsers() {
@@ -177,5 +185,116 @@ public class UserService {
         System.err.println("🔄 RÉINITIALISATION - FIN\n");
 
         return Optional.of(updatedUser);
+    }
+
+    // Générer un code pour devenir admin
+    public String generateAdminPromotionCode() {
+        return adminCodeGenerator.generateAdminCode();
+    }
+
+    // Promouvoir un utilisateur en admin avec un code
+    public boolean promoteToAdmin(String email, String adminCode) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        
+        if (userOpt.isEmpty()) {
+            System.err.println("❌ Utilisateur non trouvé: " + email);
+            return false;
+        }
+
+        User user = userOpt.get();
+
+        // Vérifier si l'utilisateur est déjà admin
+        if (user.isAdmin()) {
+            System.err.println("ℹ️ L'utilisateur " + email + " est déjà admin");
+            return false;
+        }
+
+        // Valider le code admin
+        if (!adminCodeGenerator.validateAdminCode(adminCode)) {
+            System.err.println("❌ Code admin invalide pour: " + email);
+            return false;
+        }
+
+        // Promouvoir l'utilisateur
+        user.setRole(UserRole.ADMIN);
+        System.err.println("✅ " + email + " a été promu ADMIN!");
+        
+        // Supprimer la demande si elle existe
+        adminRequestRepository.delete(email);
+        
+        return true;
+    }
+
+    // Créer une demande pour devenir admin
+    public AdminRequest requestAdminRole(String email) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        
+        if (userOpt.isEmpty()) {
+            throw new RuntimeException("Utilisateur non trouvé");
+        }
+
+        User user = userOpt.get();
+
+        // Vérifier si l'utilisateur est déjà admin
+        if (user.isAdmin()) {
+            throw new RuntimeException("Vous êtes déjà administrateur");
+        }
+
+        // Créer la demande
+        AdminRequest request = new AdminRequest(email);
+        adminRequestRepository.save(request);
+        
+        System.err.println("📩 Nouvelle demande admin de: " + email);
+        
+        return request;
+    }
+
+    // Récupérer toutes les demandes en attente
+    public List<AdminRequest> getPendingAdminRequests() {
+        return adminRequestRepository.findAllPending();
+    }
+
+    // Approuver une demande avec un code admin
+    public boolean approveAdminRequest(String email, String adminCode) {
+        // Vérifier que la demande existe
+        Optional<AdminRequest> requestOpt = adminRequestRepository.findByEmail(email);
+        
+        if (requestOpt.isEmpty()) {
+            System.err.println("❌ Aucune demande en attente pour: " + email);
+            return false;
+        }
+
+        // Valider le code admin
+        if (!adminCodeGenerator.validateAdminCode(adminCode)) {
+            System.err.println("❌ Code admin invalide");
+            return false;
+        }
+
+        // Promouvoir l'utilisateur
+        boolean promoted = promoteToAdmin(email, adminCode);
+        
+        if (promoted) {
+            AdminRequest request = requestOpt.get();
+            request.setStatus("APPROVED");
+            System.err.println("✅ Demande approuvée pour: " + email);
+        }
+        
+        return promoted;
+    }
+
+    // Rejeter une demande
+    public boolean rejectAdminRequest(String email) {
+        Optional<AdminRequest> requestOpt = adminRequestRepository.findByEmail(email);
+        
+        if (requestOpt.isEmpty()) {
+            return false;
+        }
+
+        AdminRequest request = requestOpt.get();
+        request.setStatus("REJECTED");
+        adminRequestRepository.delete(email);
+        
+        System.err.println("❌ Demande rejetée pour: " + email);
+        return true;
     }
 }

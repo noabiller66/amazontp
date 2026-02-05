@@ -8,6 +8,7 @@ import com.example.demo.user.controller.dto.VerifyCodeRequest;
 // import com.example.demo.user.controller.dto.VerifyLoginCodeRequest;
 import com.example.demo.user.controller.dto.ResetPasswordRequest;
 import com.example.demo.user.model.User;
+import com.example.demo.user.model.AdminRequest;
 import com.example.demo.user.service.UserService;
 
 import jakarta.validation.Valid;
@@ -173,6 +174,109 @@ public class UserController {
             );
         } else {
             throw new RuntimeException("Code de vérification invalide ou expiré");
+        }
+    }
+
+    // Générer un code pour promouvoir un utilisateur en admin
+    @PostMapping("/admin/generate-code")
+    public Map<String, String> generateAdminCode() {
+        String code = userService.generateAdminPromotionCode();
+        return Map.of(
+            "code", code,
+            "message", "Code admin généré. Valide pendant 10 minutes.",
+            "validityMinutes", "10"
+        );
+    }
+
+    // Promouvoir un utilisateur en admin avec le code
+    @PostMapping("/admin/promote")
+    public Map<String, String> promoteToAdmin(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String adminCode = request.get("code");
+
+        if (email == null || adminCode == null) {
+            throw new RuntimeException("Email et code requis");
+        }
+
+        boolean promoted = userService.promoteToAdmin(email, adminCode);
+
+        if (promoted) {
+            return Map.of(
+                "message", "Utilisateur promu admin avec succès",
+                "email", email,
+                "role", "ADMIN"
+            );
+        } else {
+            throw new RuntimeException("Échec de la promotion. Code invalide ou utilisateur déjà admin.");
+        }
+    }
+
+    // ===== SYSTÈME DE DEMANDES ADMIN =====
+
+    // Demander à devenir admin (bouton côté utilisateur)
+    @PostMapping("/admin/request")
+    public Map<String, String> requestAdminRole(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+
+        if (email == null) {
+            throw new RuntimeException("Email requis");
+        }
+
+        AdminRequest adminRequest = userService.requestAdminRole(email);
+
+        return Map.of(
+            "message", "Demande envoyée avec succès. En attente de validation.",
+            "email", email,
+            "status", adminRequest.getStatus()
+        );
+    }
+
+    // Voir toutes les demandes en attente (pour les admins)
+    @GetMapping("/admin/requests")
+    public List<AdminRequest> getPendingAdminRequests() {
+        return userService.getPendingAdminRequests();
+    }
+
+    // Approuver une demande (admin génère un code et l'utilise)
+    @PostMapping("/admin/approve")
+    public Map<String, String> approveAdminRequest(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String adminCode = request.get("code");
+
+        if (email == null || adminCode == null) {
+            throw new RuntimeException("Email et code requis");
+        }
+
+        boolean approved = userService.approveAdminRequest(email, adminCode);
+
+        if (approved) {
+            return Map.of(
+                "message", "Demande approuvée. Utilisateur promu admin.",
+                "email", email
+            );
+        } else {
+            throw new RuntimeException("Échec de l'approbation");
+        }
+    }
+
+    // Rejeter une demande
+    @PostMapping("/admin/reject")
+    public Map<String, String> rejectAdminRequest(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+
+        if (email == null) {
+            throw new RuntimeException("Email requis");
+        }
+
+        boolean rejected = userService.rejectAdminRequest(email);
+
+        if (rejected) {
+            return Map.of(
+                "message", "Demande rejetée",
+                "email", email
+            );
+        } else {
+            throw new RuntimeException("Demande non trouvée");
         }
     }
     

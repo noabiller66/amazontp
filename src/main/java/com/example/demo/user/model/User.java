@@ -11,6 +11,7 @@ public class User {
     private String email;
     private String pass;
     private String salt; // sel unique pour chaque utilisateur
+    private UserRole role; // Rôle de l'utilisateur (USER ou ADMIN)
 
     // /!\ pas de paramètre par défaut en java !
 
@@ -20,6 +21,7 @@ public class User {
         this.email = email;
         this.pass = pass;
         this.salt = salt;
+        this.role = UserRole.USER; // Par défaut, tout le monde est USER
     }
 
     // public void anniversaire() { // attention : Void existe ; ce n'est pas la même chose que void
@@ -52,6 +54,19 @@ public class User {
     }
     public String getSalt(){
         return salt;
+    }
+    public UserRole getRole(){
+        return role;
+    }
+
+    // Setter pour promouvoir un utilisateur en ADMIN
+    public void setRole(UserRole role){
+        this.role = role;
+    }
+
+    // Vérifier si l'utilisateur est admin
+    public boolean isAdmin(){
+        return this.role == UserRole.ADMIN;
     }
 
     // public void rename(String newName) {
